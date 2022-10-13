@@ -6,6 +6,7 @@ const User = require("./model/user");
 const express = require("express");
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const auth = require("./middleware/auth");
 
 const app = express();
 
@@ -16,9 +17,9 @@ app.get("/",(req,res)=>{
     res.send(" Home Page")
 })
 
-app.post("/register", async (req, res) => {
+app.post("/signup", async (req, res) => {
 
-    // Our register logic starts here
+    // Our signup logic starts here
     try {
       // Get user input
       const { first_name, last_name, email, password } = req.body;
@@ -63,7 +64,7 @@ app.post("/register", async (req, res) => {
     } catch (err) {
       console.log(err);
     }
-    // Our register logic starts here
+    // Our signup logic ends here
   });
 
   app.post("/login", async (req, res) => {
@@ -101,6 +102,11 @@ app.post("/register", async (req, res) => {
       console.log(err);
     }
     // Our login logic ends here
+  });
+
+
+  app.post("/welcome", auth, (req, res) => {
+    res.status(200).send("Welcome 🙌 ");
   });
 
 module.exports = app;
