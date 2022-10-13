@@ -12,7 +12,9 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => res.send(Us));
+app.get('/', (req, res) => {
+    res.redirect('/read');
+  });
 
 app.post("/create", async (req, res) => {
   // Our signup logic starts here
@@ -27,7 +29,7 @@ app.post("/create", async (req, res) => {
 
     // check if user already exist
     // Validate if user exist in our database
-    const oldUser = await User.findOne({ email });
+    const oldUser = await User.findOne({ email:email.toLowerCase() });
 
     if (oldUser) {
       return res.status(409).send("User Already Exist. Please Login");
@@ -85,13 +87,13 @@ app.post("/login", async (req, res) => {
           expiresIn: "2h",
         }
       );
-
+      user.password=null;
       // save user token
       user.token = token;
 
       // user
       res.status(200).json(user);
-      ``;
+      
     }
     res.status(400).send("Invalid Credentials");
   } catch (err) {
@@ -121,6 +123,36 @@ app.get("/read", (req, res) =>
   })
 );
 
+app.put("/update",auth,async (req,res)=>{
+    const token_user = req.user;
+    if(!token_user){
+        res.status(401).send("Unauthenticated");
+        return;
+    }
+
+    const {updatedPassword, oldPassword} = req.body;
+    const  user = await User.findOne({email:token_user.email});
+
+    if(!user){
+        res.status(404).send("user not found!");
+        return;
+    }
+    //console.log(user);
+
+    if(await bcrypt.compare(oldPassword,user.password)){
+        let newPasswordHash = await bcrypt.hash(updatedPassword,10);
+        user.password=newPasswordHash;
+        user.save();
+        res.status(200).send("Updated!");
+        return;
+    }
+
+    
+    res.status(403).send("Wrong password!");
+
+
+});
+
 app.delete("/delete/:id", (req, res) => {
   User.findByIdAndDelete({ _id: req.params.id })
     .exec()
@@ -140,4 +172,7 @@ app.delete("/delete/:id", (req, res) => {
       });
     });
 });
+
+
+ 
 module.exports = app;
