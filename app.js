@@ -12,6 +12,8 @@ const app = express();
 
 app.use(express.json());
 
+app.get("/", (req, res) => res.send(Us));
+
 app.post("/create", async (req, res) => {
   // Our signup logic starts here
   try {
@@ -119,4 +121,23 @@ app.get("/read", (req, res) =>
   })
 );
 
+app.delete("/delete/:id", (req, res) => {
+  User.findByIdAndDelete({ _id: req.params.id })
+    .exec()
+    .then((doc) => {
+      if (!doc) {
+        return res.json({
+          message: "No such User!",
+        });
+      }
+      res.status(200).json({
+        message: "Deleted!",
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error,
+      });
+    });
+});
 module.exports = app;
