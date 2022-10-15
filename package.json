@@ -1,0 +1,21 @@
+{
+  "name": "fastify",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ShivamTyagi12345/Mongo.git",
+  "author": "Shivam Tyagi <mergesuccessful@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node app.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/node": "^7.19.1",
+    "@babel/preset-env": "^7.19.4"
+  },
+  "dependencies": {
+    "@fastify/mongodb": "^6.1.0",
+    "fastify": "^4.8.1",
+    "fastify-plugin": "^4.3.0"
+  }
+}
